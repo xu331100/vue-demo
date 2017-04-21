@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Vue 测试实例 - 菜鸟教程(runoob.com)</title>
+<script src="vue.js"></script>
+ <link rel="stylesheet"  href="http://bootswatch.com/flatly/bootstrap.css" />
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<style>
+body {
+	font-family: "Lato","Hiragino Sans GB", "Helvetica Neue", "Micrsoft YaHei", sans-serif;
+	background-color: #f7f8f9;
+	padding-top:100px;
+}
+
+ul {
+	margin-top: 10px;
+}
+
+p {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.well{
+	max-height: 400px;
+	overflow-y: scroll;
+}
+.list-group-item.router-link-active{
+	background:#2c3e50;
+	color:#ffffff;
+}
+.nav-tabs > li > a.router-link-active{
+	background:#2c3e50;
+	color:#ffffff;
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+<div class="row">
+	<div class="col-xs-2 col-xs-offset-2">
+		<div class="list-group">
+			<router-link to="/home" class="list-group-item" >Home</router-link>
+			<router-link to="/about" class="list-group-item">About</router-link>
+		</div>
+	</div>
+	<div class="col-xs-6">
+		<div class="panel">
+			<div class="panel-body">
+			<!--用于渲染匹配的组件-->						
+				<router-view></router-view>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<template id="home">
+	<div>
+    <div>
+        <h1>Home</h1>
+        <p>{{msg}}</p>
+    </div>
+    <div>
+        <ul class="nav nav-tabs">
+            <li>
+                <router-link to='/home/news'>News</router-link>
+            </li>
+            <li>
+                <router-link to='/home/message'>Messages</router-link>
+            </li>
+        </ul>
+        <router-view></router-view>
+    </div>
+	</div>
+</template>
+<template id="news">
+<div>
+
+    <ul>
+        <li><router-link to='/home/news/detail/01'>News 01</router-link></li>
+        <li><router-link to='/home/news/detail/02'>News 02</router-link></li>
+        <li><router-link to='/home/news/detail/03'>News 03</router-link></li>
+    </ul>
+	<div>
+		<router-view></router-view>
+	</div>
+</div>
+</template>
+<template id="message">
+<div>
+    <ul>
+        <li>Message 01</li>
+        <li>Message 02</li>
+        <li>Message 03</li>
+    </ul>
+</div>
+</template>
+<template id="about">
+   <div><h1>	About</h1> <p>This is the turorial about vue-router</p></div>
+</template>
+<template id="newsDetail">
+    <div>
+        News Detail - {{$route.params.id}} ......
+    </div>
+</template>
+<script>
+//创建组件
+var Home = {
+	template:'#home',
+	 data: function() {
+        return {
+            msg: 'Hello, vue router!'
+        }
+    }	
+}
+
+var About = {
+	template:'#about'
+}
+
+var News = {
+	template:'#news'
+}
+var Message = {
+	template:'#message'
+}
+var NewsDetail = {
+	template:'#newsDetail'
+}
+//映射路由
+const routes = [
+  { path: '/', redirect: '/home' },
+  { path: '/about', component:About},
+  { 
+	  path: '/home', 
+	  component: Home,
+      beforeEnter: (to, from, next) => {
+	  // ...
+       }
+	  //定义子路由
+	  children:[
+		  {path:'/home/news',component:News,
+		   children:[{path:'/home/news/detail/:id',component:NewsDetail}]
+		  },
+		  {path:'/home/message',component:Message}
+	  ]
+  }
+]
+
+//创建Router
+const router = new VueRouter({
+  routes // （缩写）相当于 routes: routes
+})
+
+const app = new Vue({
+  router
+}).$mount('#app')
+
+</script>
+</body>
+</html>
